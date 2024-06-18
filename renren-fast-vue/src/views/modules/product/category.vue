@@ -8,15 +8,23 @@
 
 <script>
 export default {
- data:[],
- defaultProps:{
-    children: "children",
-    label:"label"
+    // data:[],
+    // defaultProps:{
+    // children: "children",
+    // label:"name"
+    data() {
+    return {
+      data: [], // Initialize as an empty array
+      defaultProps: {
+        children: "children",
+        label: "name"
+      }
+    };
  },
   //计算属性，类似于data概念
-  computed:{},
+   computed:{},
   //监控data中数据变化
-  watch:{},
+  //watch:{},
   //Collections of all functions
   methods:{
     handleNodeClick(data){
@@ -26,8 +34,10 @@ export default {
         this.$http({
             url:this.$http.adornUrl('/product/category/list/tree'),
             method:'get',
-        }).then(data=>{
-            console.log("succeed ", data)
+        }).then(({data})=>{
+
+            console.log("succeeddd ", data.data)
+            this.data = data.data
         })
     }
   },

@@ -10,3 +10,21 @@ spring:
           uri: https://www.google.com
           predicates:
             - Query=url, google
+
+
+        - id: product_route
+          uri: lb://product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+          ##http://localhost:88/api/product/category/list/tree transfer to http://localhost:8080/product/category/list/tree
+        - id: admin_route
+          uri: lb://renren-fast
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /renren-fast/$\{segment}
+    ##.api
+    ##http://localhost:88/api/captcha.jpg  http://renren-fast:8080/api/captcha.jpg
+    ##actual path: http://localhost:8080/renren-fast/captcha.jpg
