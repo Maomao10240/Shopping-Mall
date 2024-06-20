@@ -46,12 +46,12 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
-
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
+            <version>1.11.267</version>
         </dependency>
+
     </dependencies>
     <dependencyManagement>
         <dependencies>
