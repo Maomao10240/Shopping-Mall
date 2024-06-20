@@ -49,7 +49,7 @@ public class CategoryController {
     public R info(@PathVariable("catId") Long catId){
 		CategoryEntity category = categoryService.getById(catId);
 
-        return R.ok().put("category", category);
+        return R.ok().put("data", category);
     }
 
     /**
@@ -74,10 +74,14 @@ public class CategoryController {
 
     /**
      * 删除
+     * post request
+     * springMVC will send json data
      */
     @RequestMapping("/delete")
     public R delete(@RequestBody Long[] catIds){
 		categoryService.removeByIds(Arrays.asList(catIds));
+        //1.check whether this has been cited by others
+        categoryService.removeMenuByIds(Arrays.asList(catIds));
 
         return R.ok();
     }
