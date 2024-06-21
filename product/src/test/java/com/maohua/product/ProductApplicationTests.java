@@ -23,11 +23,11 @@ class ProductApplicationTests {
     BrandService brandService;
     @Test
     public void testUpload(){
-        String accessKey = "AKIA5FTZBT4SNYWCQOE7";
-        String secretKey = "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";
-        String bucketName = "mall-maohua";
-        String filePath = "/Users/jiacong/Desktop/pg1.png";
-        String keyName = "your-object-key";
+//        String accessKey = "AKIA5FTZBT4SNYWCQOE7";
+//        String secretKey = "Kpaags472CtN3Hll5rVqBQ9QK97N29j+ckOWwXh3";
+//        String bucketName = "mall-maohua";
+//        String filePath = "/Users/jiacong/Desktop/pg1.png";
+//        String keyName = "your-object-key";
 
 
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
