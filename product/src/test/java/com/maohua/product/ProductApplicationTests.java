@@ -21,28 +21,7 @@ class ProductApplicationTests {
 
     @Autowired
     BrandService brandService;
-    @Test
-    public void testUpload(){
 
-
-
-        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
-        AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-                .withRegion("us-east-2") // Change to your region
-                .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
-                .build();
-
-
-        try {
-            File file = new File(filePath);
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, keyName, file);
-            s3Client.putObject(putObjectRequest);
-            System.out.println("File uploaded successfully.");
-        } catch (Exception e) {
-            System.out.println("File uploaded failed.");
-        }
-
-    }
 
     @Test
     void contextLoads() {
