@@ -11,7 +11,12 @@ spring:
           predicates:
             - Query=url, google
 
-
+        - id: third_party_route
+          uri: lb://third-party
+          predicates:
+            - Path=/api/thirdparty/**
+          filters:
+            - RewritePath=/api/thirdparty(?<segment>.*), /$\{segment}
         - id: product_route
           uri: lb://product
           predicates:
