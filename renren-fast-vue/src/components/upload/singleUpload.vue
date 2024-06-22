@@ -2,7 +2,7 @@
    
   <div>
     <el-upload
-      :action="dataObj.signature"
+      action="#"
       :http-request="uploadFile"
       list-type="picture"
       :multiple="false"
@@ -26,7 +26,7 @@
 <script>
 import { policy } from "./policy";
 import { getUUID } from "@/utils";
-import axios from 'axios';
+import axios from "axios";
 export default {
   name: "singleUpload",
   props: {
@@ -86,15 +86,14 @@ export default {
     },
     beforeUpload(file) {
       let _self = this;
-     return new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         policy()
           .then((response) => {
             console.log("response data ", response);
             _self.dataObj.policy = response.data.policy;
             _self.dataObj.signature = response.data.signature;
             _self.dataObj.awsAccessKeyId = response.data.accessId;
-            _self.dataObj.key =
-              response.data.dir + "/" + getUUID() + "_${filename}";
+            _self.dataObj.key = response.data.key;
             _self.dataObj.dir = response.data.dir;
             _self.dataObj.host = response.data.host;
             console.log("response data ....", _self.dataObj);
@@ -105,8 +104,6 @@ export default {
             reject(false);
           });
       });
-
-       
     },
     handleUploadSuccess(res, file) {
       console.log("上传成功...");
@@ -121,17 +118,25 @@ export default {
       });
       this.emitInput(this.fileList[0].url);
     },
-uploadFile(file) {
-    return axios.put(this.dataObj.signature, file)
-      .then(response => {
-        console.log('File uploaded successfully:', response);
-      })
-      .catch(error => {
-        console.error('Error uploading file:', error);
-      });
-  }
-
-
+    uploadFile(file) {
+      //console.log("ffff", file);
+      let param = new FormData();
+      param.append('file',file.file);
+      //console.log(param.get('file'));
+      let config = {
+        headers:{
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+      return axios
+        .put(this.dataObj.signature, file.file, config)
+        .then((response) => {
+          console.log("File uploaded successfully:", response);
+        })
+        .catch((error) => {
+          console.error("Error uploading file:", error);
+        });
+    },
   },
 };
 </script>

@@ -4,7 +4,7 @@ export function policy() {
         http({
             url: http.adornUrl("/thirdparty/aws/policy"),
             method: "get",
-            params: http.adornParams({})
+            params: http.adornParams({ extension: 'jpg' })
         }).then(({ data }) => {
             resolve(data);
         })

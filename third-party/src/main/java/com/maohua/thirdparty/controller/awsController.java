@@ -33,16 +33,17 @@ public class awsController {
     String endpoint = "s3.us-east-2.amazonaws.com";
 
     @RequestMapping("/aws/policy")
-    public R policy(){
-
-       String postSignature = fileUploadService.generatePreSignUrl(UUID.randomUUID()+"", bucket, HttpMethod.PUT);
+    public R policy(@RequestParam String extension){
+        String key = UUID.randomUUID() +"."+extension;
+       String postSignature = fileUploadService.generatePreSignUrl(key, bucket, HttpMethod.PUT);
        Map<String, String> respMap = new HashMap<>();
        respMap.put("signature", postSignature);
        String format = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-       String dir = format +"/";
+       String dir = "";
        String host = "https://" + bucket +"."+endpoint;
        respMap.put("host", host);
        respMap.put("dir", dir);
+        respMap.put("key", key);
        respMap.put("policy" , postSignature);
        respMap.put("accessId", accessId);
        return R.ok().put("data", respMap);
