@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-upload
-      action="http://mall-maohua.s3.us-east-2.amazonaws.com"
+      action="http://mall-maohua.s3-us-east-2.amazonaws.com"
       :data="dataObj"
       list-type="picture-card"
       :file-list="fileList"
