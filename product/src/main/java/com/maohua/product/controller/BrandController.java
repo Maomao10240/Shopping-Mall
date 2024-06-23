@@ -1,9 +1,15 @@
 package com.maohua.product.controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
+import com.maohua.common.group.AddGroup;
+import com.maohua.common.group.UpdateGroup;
+import net.sf.jsqlparser.statement.update.Update;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +21,7 @@ import com.maohua.product.service.BrandService;
 import com.maohua.common.utils.PageUtils;
 import com.maohua.common.utils.R;
 
+import javax.validation.Valid;
 
 
 /**
@@ -55,17 +62,29 @@ public class BrandController {
      * 保存
      */
     @RequestMapping("/save")
-    public R save(@RequestBody BrandEntity brand){
-		brandService.save(brand);
+    public R save(@Validated({AddGroup.class}) @RequestBody BrandEntity brand/*, BindingResult result*/){
+//        if(result.hasErrors()){
+//            Map<String, String> map = new HashMap<>();
+//            result.getFieldErrors().forEach((item)->{
+//                String message = item.getDefaultMessage();
+//                String field = item.getField();
+//                map.put(field, message);
+//            });
+//           return R.error(400, "data submitted is not valid").put("data", map);
+//        }else{
+            brandService.save(brand);
+            return R.ok();
+    //    }
 
-        return R.ok();
+
+
     }
 
     /**
      * 修改
      */
     @RequestMapping("/update")
-    public R update(@RequestBody BrandEntity brand){
+    public R update(@Validated({UpdateGroup.class}) @RequestBody BrandEntity brand){
 		brandService.updateById(brand);
 
         return R.ok();
