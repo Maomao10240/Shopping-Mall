@@ -102,7 +102,7 @@ export default {
             validator: (rule, value, callback) => {
               if (value == " ") {
                 callback(new Error("data must be entered"));
-              } else if (Number.isInteger(value)||value < 0) {
+              } else if (!Number.isInteger(value)||value < 0) {
                 callback(new Error("must be Integer, and larger than 0"));
               } else {
                 callback();
@@ -163,6 +163,7 @@ export default {
               sort: this.dataForm.sort,
             }),
           }).then(({ data }) => {
+            console.log("data ", data);
             if (data && data.code === 0) {
               this.$message({
                 message: "操作成功",
@@ -174,6 +175,7 @@ export default {
                 },
               });
             } else {
+              console.log("failed");
               this.$message.error(data.msg);
             }
           });
