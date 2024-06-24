@@ -1,6 +1,9 @@
 package com.maohua.product.service.impl;
 
 import com.maohua.common.utils.PageUtils;
+import com.maohua.product.entity.CategoryBrandRelationEntity;
+import com.maohua.product.service.CategoryBrandRelationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,11 +19,14 @@ import com.maohua.common.utils.Query;
 import com.maohua.product.dao.CategoryDao;
 import com.maohua.product.entity.CategoryEntity;
 import com.maohua.product.service.CategoryService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
+    @Autowired
+    CategoryBrandRelationService categoryBrandRelationService;
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<CategoryEntity> page = this.page(
@@ -52,6 +58,14 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public void removeMenuByIds(List<Long> list) {
         //TODO
         baseMapper.deleteBatchIds(list);
+    }
+
+    @Transactional
+    @Override
+    public void updateCascade(CategoryEntity category) {
+        this.updateById(category);
+        categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
+
     }
 
     private List<CategoryEntity> getChildrens(CategoryEntity root, List<CategoryEntity> all) {

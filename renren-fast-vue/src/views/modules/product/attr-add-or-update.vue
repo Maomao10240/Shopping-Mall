@@ -1,71 +1,85 @@
 <template>
   <el-dialog
-    :title="!dataForm.attrId ? '新增' : '修改'"
+    :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible"
+    @closed="dialogClose"
   >
-    <el-form
-      :model="dataForm"
-      :rules="dataRule"
-      ref="dataForm"
-      @keyup.enter.native="dataFormSubmit()"
-      label-width="300px"
-    >
+    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="120px">
+      <!--       @keyup.enter.native="dataFormSubmit()" -->
       <el-form-item label="属性名" prop="attrName">
         <el-input v-model="dataForm.attrName" placeholder="属性名"></el-input>
       </el-form-item>
-      <el-form-item label="是否需要检索[0-不需要，1-需要]" prop="searchType">
-        <el-input
-          v-model="dataForm.searchType"
-          placeholder="是否需要检索[0-不需要，1-需要]"
-        ></el-input>
+      <el-form-item label="属性类型" prop="attrType">
+        <el-select v-model="dataForm.attrType" placeholder="请选择">
+          <el-option label="规格参数" :value="1"></el-option>
+          <el-option label="销售属性" :value="0"></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item
-        label="值类型[0-为单个值，1-可以选择多个值]"
-        prop="valueType"
-      >
-        <el-input
+
+      <el-form-item label="值类型" prop="valueType">
+        <el-switch
           v-model="dataForm.valueType"
-          placeholder="值类型[0-为单个值，1-可以选择多个值]"
-        ></el-input>
+          active-text="允许多个值"
+          inactive-text="只能单个值"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          :inactive-value="0"
+          :active-value="1"
+        ></el-switch>
+      </el-form-item>
+      <el-form-item label="可选值" prop="valueSelect">
+        <!-- <el-input v-model="dataForm.valueSelect"></el-input> -->
+        <el-select
+          v-model="dataForm.valueSelect"
+          multiple
+          filterable
+          allow-create
+          placeholder="请输入内容"
+        ></el-select>
       </el-form-item>
       <el-form-item label="属性图标" prop="icon">
         <el-input v-model="dataForm.icon" placeholder="属性图标"></el-input>
       </el-form-item>
-      <el-form-item label="可选值列表[用逗号分隔]" prop="valueSelect">
-        <el-input
-          v-model="dataForm.valueSelect"
-          placeholder="可选值列表[用逗号分隔]"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="属性类型[0-销售属性，1-基本属性" prop="attrType">
-        <el-input
-          v-model="dataForm.attrType"
-          placeholder="属性类型[0-销售属性，1-基本属性"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="启用状态[0 - 禁用，1 - 启用]" prop="enable">
-        <el-input
-          v-model="dataForm.enable"
-          placeholder="启用状态[0 - 禁用，1 - 启用]"
-        ></el-input>
-      </el-form-item>
       <el-form-item label="所属分类" prop="catelogId">
-        <!-- //<el-input v-model="dataForm.catelogId" placeholder="所属分类"></el-input> -->
-        <el-cascader
-          v-model="dataForm.catelogIds"
-          :options="categories"
-          :props="props"
-        ></el-cascader>
+        <category-cascader :catelogPath.sync="catelogPath"></category-cascader>
       </el-form-item>
-      <el-form-item
-        label="快速展示【是否展示在介绍上；0-否 1-是】，在sku中仍然可以调整"
-        prop="showDesc"
-      >
-        <el-input
+      <el-form-item label="所属分组" prop="attrGroupId" v-if="type == 1">
+        <el-select ref="groupSelect" v-model="dataForm.attrGroupId" placeholder="请选择">
+          <el-option
+            v-for="item in attrGroups"
+            :key="item.attrGroupId"
+            :label="item.attrGroupName"
+            :value="item.attrGroupId"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="可检索" prop="searchType" v-if="type == 1">
+        <el-switch
+          v-model="dataForm.searchType"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          :active-value="1"
+          :inactive-value="0"
+        ></el-switch>
+      </el-form-item>
+      <el-form-item label="快速展示" prop="showDesc" v-if="type == 1">
+        <el-switch
           v-model="dataForm.showDesc"
-          placeholder="快速展示【是否展示在介绍上；0-否 1-是】，在sku中仍然可以调整"
-        ></el-input>
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          :active-value="1"
+          :inactive-value="0"
+        ></el-switch>
+      </el-form-item>
+      <el-form-item label="启用状态" prop="enable">
+        <el-switch
+          v-model="dataForm.enable"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          :active-value="1"
+          :inactive-value="0"
+        ></el-switch>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -76,84 +90,118 @@
 </template>
 
 <script>
+import CategoryCascader from "../common/category-cascader";
 export default {
   data() {
     return {
-      props: { value: "catId", label: "name", children: "children" },
       visible: false,
-      categories: [],
       dataForm: {
         attrId: 0,
         attrName: "",
-        searchType: "",
-        valueType: "",
+        searchType: 0,
+        valueType: 1,
         icon: "",
         valueSelect: "",
-        attrType: "",
-        enable: "",
-        catelogIds: [],
-        catelogId:0,
-        showDesc: "",
+        attrType: 1,
+        enable: 1,
+        catelogId: "",
+        attrGroupId: "",
+        showDesc: 0
       },
+      catelogPath: [],
+      attrGroups: [],
       dataRule: {
         attrName: [
-          { required: true, message: "属性名不能为空", trigger: "blur" },
+          { required: true, message: "属性名不能为空", trigger: "blur" }
         ],
         searchType: [
           {
             required: true,
-            message: "是否需要检索[0-不需要，1-需要]不能为空",
-            trigger: "blur",
-          },
+            message: "是否需要检索不能为空",
+            trigger: "blur"
+          }
         ],
         valueType: [
           {
             required: true,
-            message: "值类型[0-为单个值，1-可以选择多个值]不能为空",
-            trigger: "blur",
-          },
+            message: "值类型不能为空",
+            trigger: "blur"
+          }
         ],
         icon: [
-          { required: true, message: "属性图标不能为空", trigger: "blur" },
-        ],
-        valueSelect: [
-          {
-            required: true,
-            message: "可选值列表[用逗号分隔]不能为空",
-            trigger: "blur",
-          },
+          { required: true, message: "属性图标不能为空", trigger: "blur" }
         ],
         attrType: [
           {
             required: true,
-            message: "属性类型[0-销售属性，1-基本属性不能为空",
-            trigger: "blur",
-          },
+            message: "属性类型不能为空",
+            trigger: "blur"
+          }
         ],
         enable: [
           {
             required: true,
-            message: "启用状态[0 - 禁用，1 - 启用]不能为空",
-            trigger: "blur",
-          },
+            message: "启用状态不能为空",
+            trigger: "blur"
+          }
         ],
         catelogId: [
-          { required: true, message: "所属分类不能为空", trigger: "blur" },
+          {
+            required: true,
+            message: "需要选择正确的三级分类数据",
+            trigger: "blur"
+          }
         ],
         showDesc: [
           {
             required: true,
-            message:
-              "快速展示【是否展示在介绍上；0-否 1-是】，在sku中仍然可以调整不能为空",
-            trigger: "blur",
-          },
-        ],
-      },
+            message: "快速展示不能为空",
+            trigger: "blur"
+          }
+        ]
+      }
     };
   },
+  props:{
+    type:{
+      type: Number,
+      default: 1
+    }
+  },
+  watch: {
+    catelogPath(path) {
+      //监听到路径变化需要查出这个三级分类的分组信息
+      console.log("路径变了", path);
+      this.attrGroups = [];
+      this.dataForm.attrGroupId = "";
+      this.dataForm.catelogId = path[path.length - 1];
+      if (path && path.length == 3) {
+        this.$http({
+          url: this.$http.adornUrl(
+            `/product/attrgroup/list/${path[path.length - 1]}`
+          ),
+          method: "get",
+          params: this.$http.adornParams({ page: 1, limit: 10000000 })
+        }).then(({ data }) => {
+          if (data && data.code === 0) {
+            this.attrGroups = data.page.list;
+          } else {
+            this.$message.error(data.msg);
+          }
+        });
+      } else if (path.length == 0) {
+        this.dataForm.catelogId = "";
+      } else {
+        this.$message.error("请选择正确的分类");
+        this.dataForm.catelogId = "";
+      }
+    }
+  },
+  components: { CategoryCascader },
   methods: {
     init(id) {
       this.dataForm.attrId = id || 0;
+      this.dataForm.attrType = this.type;
       this.visible = true;
       this.$nextTick(() => {
         this.$refs["dataForm"].resetFields();
@@ -163,35 +211,32 @@ export default {
               `/product/attr/info/${this.dataForm.attrId}`
             ),
             method: "get",
-            params: this.$http.adornParams(),
+            params: this.$http.adornParams()
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.dataForm.attrName = data.attr.attrName;
               this.dataForm.searchType = data.attr.searchType;
               this.dataForm.valueType = data.attr.valueType;
               this.dataForm.icon = data.attr.icon;
-              this.dataForm.valueSelect = data.attr.valueSelect;
+              this.dataForm.valueSelect = data.attr.valueSelect.split(";");
               this.dataForm.attrType = data.attr.attrType;
               this.dataForm.enable = data.attr.enable;
               this.dataForm.catelogId = data.attr.catelogId;
               this.dataForm.showDesc = data.attr.showDesc;
+              //attrGroupId
+              //catelogPath
+              this.catelogPath = data.attr.catelogPath;
+              this.$nextTick(() => {
+                this.dataForm.attrGroupId = data.attr.attrGroupId;
+              });
             }
           });
         }
       });
     },
-    getCategories() {
-      this.$http({
-        url: this.$http.adornUrl("/product/category/list/tree"),
-        method: "get",
-      }).then(({ data }) => {
-        console.log("succeeddd ", data.data);
-        this.categories = data.data;
-      });
-    },
     // 表单提交
     dataFormSubmit() {
-      this.$refs["dataForm"].validate((valid) => {
+      this.$refs["dataForm"].validate(valid => {
         if (valid) {
           this.$http({
             url: this.$http.adornUrl(
@@ -204,12 +249,13 @@ export default {
               searchType: this.dataForm.searchType,
               valueType: this.dataForm.valueType,
               icon: this.dataForm.icon,
-              valueSelect: this.dataForm.valueSelect,
+              valueSelect: this.dataForm.valueSelect.join(";"),
               attrType: this.dataForm.attrType,
               enable: this.dataForm.enable,
-              catelogId: this.dataForm.catelogIds[this.dataForm.catelogIds.length-1],
-              showDesc: this.dataForm.showDesc,
-            }),
+              catelogId: this.dataForm.catelogId,
+              attrGroupId: this.dataForm.attrGroupId,
+              showDesc: this.dataForm.showDesc
+            })
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
@@ -219,7 +265,7 @@ export default {
                 onClose: () => {
                   this.visible = false;
                   this.$emit("refreshDataList");
-                },
+                }
               });
             } else {
               this.$message.error(data.msg);
@@ -228,9 +274,10 @@ export default {
         }
       });
     },
-  },
-  created() {
-    this.getCategories();
-  },
+    //dialogClose
+    dialogClose() {
+      this.catelogPath = [];
+    }
+  }
 };
 </script>
