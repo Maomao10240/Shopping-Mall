@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.maohua.product.entity.AttrEntity;
+import com.maohua.product.service.AttrAttrgroupRelationService;
 import com.maohua.product.service.AttrService;
 import com.maohua.product.vo.AttrGroupRelationVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +32,23 @@ public class AttrGroupController {
     private AttrGroupService attrGroupService;
     @Autowired
     AttrService attrService;
+    @Autowired
+    AttrAttrgroupRelationService relationService;
+
+    @GetMapping("/{attrgroupId}/noattr/relation")
+    public R getNoRelation(@RequestParam Map<String, Object> params, @PathVariable("attrgroupId") Long attrgroupId) {
+        PageUtils page = attrService.getNoRelationAttr(params, attrgroupId);
+        return R.ok().put("page", page);
+    }
+
+    @PostMapping("/attr/relation")
+    public R addRelation(@RequestBody List<AttrGroupRelationVo> vos) {
+        relationService.saveBatch(vos);
+        return R.ok();
+    }
 
     @GetMapping("/{attrgroupId}/attr/relation")
-    public R addRelation(@PathVariable("attrgroupId") Long attrgroupId) {
+    public R getRelation(@PathVariable("attrgroupId") Long attrgroupId) {
         List<AttrEntity> entities = attrService.getRelationAttr(attrgroupId);
         return R.ok().put("data", entities);
     }
@@ -95,5 +110,7 @@ public class AttrGroupController {
 
         return R.ok();
     }
+
+
 
 }
