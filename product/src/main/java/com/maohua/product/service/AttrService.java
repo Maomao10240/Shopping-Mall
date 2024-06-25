@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.maohua.common.utils.PageUtils;
 import com.maohua.common.utils.PageUtils;
 import com.maohua.product.entity.AttrEntity;
+import com.maohua.product.vo.AttrResVo;
 import com.maohua.product.vo.AttrVo;
 
 import java.util.Map;
@@ -22,5 +23,9 @@ public interface AttrService extends IService<AttrEntity> {
     void saveAttr(AttrVo attr);
 
     PageUtils queryBasePage(Map<String, Object> params, Long catelogId);
+
+    AttrResVo getAttrInfo(Long attrId);
+
+    void updateAttr(AttrVo attr);
 }
 
