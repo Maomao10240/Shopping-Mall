@@ -2,11 +2,12 @@ package com.maohua.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.maohua.common.utils.PageUtils;
-import com.maohua.common.utils.PageUtils;
 import com.maohua.product.entity.AttrEntity;
+import com.maohua.product.vo.AttrGroupRelationVo;
 import com.maohua.product.vo.AttrResVo;
 import com.maohua.product.vo.AttrVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,10 +23,14 @@ public interface AttrService extends IService<AttrEntity> {
 
     void saveAttr(AttrVo attr);
 
-    PageUtils queryBasePage(Map<String, Object> params, Long catelogId);
+    PageUtils queryBasePage(Map<String, Object> params, Long catelogId, String type);
 
     AttrResVo getAttrInfo(Long attrId);
 
     void updateAttr(AttrVo attr);
+
+    List<AttrEntity> getRelationAttr(Long attrgroupId);
+
+    void deleteRelation(AttrGroupRelationVo[] vos);
 }
 
