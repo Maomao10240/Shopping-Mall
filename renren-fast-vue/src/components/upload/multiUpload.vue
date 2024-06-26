@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-upload
-      action="http://mall-maohua.s3-us-east-2.amazonaws.com"
+      action="#"
+      :http-request="uploadFile"
       :data="dataObj"
       list-type="picture-card"
       :file-list="fileList"
@@ -21,7 +22,9 @@
 </template>
 <script>
 import { policy } from "./policy";
-import { getUUID } from '@/utils'
+import { getUUID } from "@/utils";
+import axios from "axios";
+
 export default {
   name: "multiUpload",
   props: {
@@ -30,8 +33,8 @@ export default {
     //最大上传图片数量
     maxCount: {
       type: Number,
-      default: 30
-    }
+      default: 30,
+    },
   },
   data() {
     return {
@@ -39,13 +42,13 @@ export default {
         policy: "",
         signature: "",
         key: "",
-        ossaccessKeyId: "",
+        awsAccessKeyId: "",
         dir: "",
         host: "",
-        uuid: ""
+        callback: "",
       },
       dialogVisible: false,
-      dialogImageUrl: null
+      dialogImageUrl: null,
     };
   },
   computed: {
@@ -56,7 +59,7 @@ export default {
       }
 
       return fileList;
-    }
+    },
   },
   mounted() {},
   methods: {
@@ -78,18 +81,19 @@ export default {
       let _self = this;
       return new Promise((resolve, reject) => {
         policy()
-          .then(response => {
-            console.log("这是什么${filename}");
+          .then((response) => {
+            console.log("response data ", response);
             _self.dataObj.policy = response.data.policy;
             _self.dataObj.signature = response.data.signature;
-            _self.dataObj.ossaccessKeyId = response.data.accessid;
-            _self.dataObj.key = response.data.dir + "/"+getUUID()+"_${filename}";
+            _self.dataObj.awsAccessKeyId = response.data.accessId;
+            _self.dataObj.key = response.data.key;
             _self.dataObj.dir = response.data.dir;
             _self.dataObj.host = response.data.host;
+            console.log("response data ....", _self.dataObj);
             resolve(true);
           })
-          .catch(err => {
-            console.log("出错了...",err)
+          .catch((err) => {
+            console.log("出错了...", err);
             reject(false);
           });
       });
@@ -98,7 +102,10 @@ export default {
       this.fileList.push({
         name: file.name,
         // url: this.dataObj.host + "/" + this.dataObj.dir + "/" + file.name； 替换${filename}为真正的文件名
-        url: this.dataObj.host + "/" + this.dataObj.key.replace("${filename}",file.name)
+        url:
+          this.dataObj.host +
+          "/" +
+          this.dataObj.key.replace("${filename}", file.name),
       });
       this.emitInput(this.fileList);
     },
@@ -106,10 +113,29 @@ export default {
       this.$message({
         message: "最多只能上传" + this.maxCount + "张图片",
         type: "warning",
-        duration: 1000
+        duration: 1000,
       });
-    }
-  }
+    },
+    uploadFile(file) {
+      //console.log("ffff", file);
+      let param = new FormData();
+      param.append("file", file.file);
+      //console.log(param.get('file'));
+      let config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+      return axios
+        .put(this.dataObj.signature, file.file, config)
+        .then((response) => {
+          console.log("File uploaded successfully:", response);
+        })
+        .catch((error) => {
+          console.error("Error uploading file:", error);
+        });
+    },
+  },
 };
 </script>
 <style>

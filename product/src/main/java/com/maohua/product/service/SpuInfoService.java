@@ -3,7 +3,9 @@ package com.maohua.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.maohua.common.utils.PageUtils;
 import com.maohua.common.utils.PageUtils;
+import com.maohua.product.entity.SpuInfoDescEntity;
 import com.maohua.product.entity.SpuInfoEntity;
+import com.maohua.product.vo.SpuSaveVo;
 
 import java.util.Map;
 
@@ -17,5 +19,13 @@ import java.util.Map;
 public interface SpuInfoService extends IService<SpuInfoEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void saveSpuInfo(SpuSaveVo spuInfo);
+
+    void saveBaseSpuInfo(SpuInfoEntity infoEntity);
+
+
+
+//    void saveBaseSpuInfo(SpuSaveVo spuInfo);
 }
 

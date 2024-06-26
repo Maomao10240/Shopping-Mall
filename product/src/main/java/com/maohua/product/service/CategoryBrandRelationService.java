@@ -3,9 +3,11 @@ package com.maohua.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.maohua.common.utils.PageUtils;
 import com.maohua.common.utils.PageUtils;
+import com.maohua.product.entity.BrandEntity;
 import com.maohua.product.entity.CategoryBrandRelationEntity;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,5 +26,7 @@ public interface CategoryBrandRelationService extends IService<CategoryBrandRela
     void updateBrand(Long brandId, String name);
 
     void updateCategory( Long catId, String name);
+
+    List<BrandEntity> getBrandsByCatId(Long catId);
 }
 

@@ -8,6 +8,7 @@ import com.maohua.product.entity.AttrEntity;
 import com.maohua.product.service.AttrAttrgroupRelationService;
 import com.maohua.product.service.AttrService;
 import com.maohua.product.vo.AttrGroupRelationVo;
+import com.maohua.product.vo.AttrGroupWithAttrsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,16 @@ public class AttrGroupController {
     AttrService attrService;
     @Autowired
     AttrAttrgroupRelationService relationService;
+
+    @GetMapping("/{catelogId}/withattr")
+    public R getAttrGroupWithAttrs(@PathVariable("catelogId") Long catelogId){
+        //1.search all attr groups for this category
+        List<AttrGroupWithAttrsVo> vos = attrGroupService.getAttrGroupWithAttrsByCatelogId(catelogId);
+        //2. search all attrs under this group
+        return R.ok().put("data", vos);
+    }
+
+
 
     @GetMapping("/{attrgroupId}/noattr/relation")
     public R getNoRelation(@RequestParam Map<String, Object> params, @PathVariable("attrgroupId") Long attrgroupId) {

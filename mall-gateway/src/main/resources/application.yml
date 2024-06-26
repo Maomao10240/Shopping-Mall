@@ -2,14 +2,14 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: test_route
-          uri: https://www.baidu.com
-          predicates:
-            - Query=url, baidu
-        - id: google
-          uri: https://www.google.com
-          predicates:
-            - Query=url, google
+#        - id: test_route
+#          uri: https://www.baidu.com
+#          predicates:
+#            - Query=url, baidu
+#        - id: google
+#          uri: https://www.google.com
+#          predicates:
+#            - Query=url, google
 
         - id: third_party_route
           uri: lb://third-party
@@ -17,6 +17,14 @@ spring:
             - Path=/api/thirdparty/**
           filters:
             - RewritePath=/api/thirdparty(?<segment>.*), /$\{segment}
+
+        - id: member_route
+          uri: lb://member
+          predicates:
+            - Path=/api/member/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+
         - id: product_route
           uri: lb://product
           predicates:
