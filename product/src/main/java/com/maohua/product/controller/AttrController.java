@@ -1,8 +1,11 @@
 package com.maohua.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.maohua.product.entity.ProductAttrValueEntity;
+import com.maohua.product.service.ProductAttrValueService;
 import com.maohua.product.vo.AttrResVo;
 import com.maohua.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,8 @@ import com.maohua.common.utils.R;
 public class AttrController {
     @Autowired
     private AttrService attrService;
+    @Autowired
+    ProductAttrValueService productAttrValueService;
 
     @GetMapping("/{attrType}/list/{catelogId}")
     public R baseAttrList(@RequestParam Map<String, Object> params, @PathVariable("catelogId") Long catelogId, @PathVariable("attrType") String type) {
@@ -35,6 +40,17 @@ public class AttrController {
         return R.ok().put("page", page);
     }
 
+    @RequestMapping("/base/listforspu/{spuId}")
+    public R baseAttrList(@PathVariable("spuId") Long spuId){
+        List<ProductAttrValueEntity> entities = productAttrValueService.baseAttrListforSpu(spuId);
+        return R.ok().put("data",entities);
+    }
+    @PostMapping("/update/{spuId}")
+    public R updateSpuAttr(@PathVariable("spuId") Long spuId, @RequestBody List<ProductAttrValueEntity> entities){
+        productAttrValueService.updateSpuAttr(spuId, entities);
+
+        return R.ok();
+    }
 
     /**
      * 列表
