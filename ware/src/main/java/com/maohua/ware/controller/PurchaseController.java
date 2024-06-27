@@ -1,14 +1,14 @@
 package com.maohua.ware.controller;
 
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
+import com.maohua.ware.vo.MergeVo;
+import com.maohua.ware.vo.PurchaseFinishVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.maohua.ware.entity.PurchaseEntity;
 import com.maohua.ware.service.PurchaseService;
@@ -33,6 +33,24 @@ public class PurchaseController {
     /**
      * 列表
      */
+    //领取采购单
+    @PostMapping("/received")
+    public R received(@RequestBody List<Long> ids) {
+        purchaseService.received(ids);
+        return R.ok();
+    }
+
+    @PostMapping("/done")
+    public R finish(@RequestBody PurchaseFinishVo doneVo) {
+        purchaseService.done(doneVo);
+        return R.ok();
+    }
+
+    @PostMapping("/merge")
+    public R merge(@RequestBody MergeVo mergeVo) {
+        purchaseService.mergePurchase(mergeVo);
+        return R.ok();
+    }
     @RequestMapping("/list")
     //@RequiresPermissions("ware:purchase:list")
     public R list(@RequestParam Map<String, Object> params){
@@ -40,7 +58,13 @@ public class PurchaseController {
 
         return R.ok().put("page", page);
     }
+    @GetMapping("/unreceive/list")
+    //@RequiresPermissions("ware:purchase:list")
+    public R unreceiveList(@RequestParam Map<String, Object> params){
+        PageUtils page = purchaseService.queryPageUnreceive(params);
 
+        return R.ok().put("page", page);
+    }
 
     /**
      * 信息
@@ -59,6 +83,8 @@ public class PurchaseController {
     @RequestMapping("/save")
     //@RequiresPermissions("ware:purchase:save")
     public R save(@RequestBody PurchaseEntity purchase){
+        purchase.setUpdateTime(new Date());
+        purchase.setCreateTime(new Date());
 		purchaseService.save(purchase);
 
         return R.ok();

@@ -24,11 +24,17 @@ spring:
             - Path=/api/member/**
           filters:
             - RewritePath=/api/(?<segment>.*), /$\{segment}
+        - id: ware_route
+          uri: lb://member
+          predicates:
+            - Path=/api/member/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
 
         - id: product_route
-          uri: lb://product
+          uri: lb://ware
           predicates:
-            - Path=/api/product/**
+            - Path=/api/ware/**
           filters:
             - RewritePath=/api/(?<segment>.*), /$\{segment}
           ##http://localhost:88/api/product/category/list/tree transfer to http://localhost:8080/product/category/list/tree
