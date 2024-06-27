@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.maohua.common.utils.PageUtils;
 import com.maohua.common.utils.PageUtils;
 import com.maohua.product.entity.CategoryEntity;
+import com.maohua.product.vo.Catelog2Vo;
 
 import java.util.List;
 import java.util.Map;
@@ -26,5 +27,9 @@ public interface CategoryService extends IService<CategoryEntity> {
     void updateCascade(CategoryEntity category);
 
     Long[] findCatelogPath(Long catelogId);
+
+    List<CategoryEntity> getLevel1Categorys();
+
+    Map<String, List<Catelog2Vo>> getCatalogJson();
 }
 

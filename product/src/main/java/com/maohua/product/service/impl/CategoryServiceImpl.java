@@ -3,6 +3,7 @@ package com.maohua.product.service.impl;
 import com.maohua.common.utils.PageUtils;
 import com.maohua.product.entity.CategoryBrandRelationEntity;
 import com.maohua.product.service.CategoryBrandRelationService;
+import com.maohua.product.vo.Catelog2Vo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,6 +72,42 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Override
     public Long[] findCatelogPath(Long catelogId) {
         return new Long[0];
+    }
+
+    @Override
+    public List<CategoryEntity> getLevel1Categorys() {
+        List<CategoryEntity> categoryEntities = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
+        return categoryEntities;
+    }
+
+    @Override
+    public Map<String, List<Catelog2Vo>> getCatalogJson() {
+        //1.查出所有一级分类
+        List<CategoryEntity> level1Categorys = getLevel1Categorys();
+        //2.encapsulate
+        Map<String, List<Catelog2Vo>> parent = level1Categorys.stream().collect(Collectors.toMap(k->k.getCatId().toString(), v->{
+            //查到一级分类下的二级分类
+            List<CategoryEntity> categoryEntities = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", v.getCatId()));
+            List<Catelog2Vo> catelog2Vos = null;
+            if(categoryEntities!=null&&categoryEntities.size()>0){
+                catelog2Vos = categoryEntities.stream().map(item ->{
+                    Catelog2Vo vp = new Catelog2Vo(item.getCatId().toString(), null, item.getCatId().toString(), item.getName());
+                    //找当前二级分类的三级分类
+                   List<CategoryEntity> level3Vos = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", item.getCatId()));
+                   if(level3Vos != null && level3Vos.size()>0){
+                       List<Catelog2Vo.Catelog3Vo> collect = level3Vos.stream().map(l3->{
+                           Catelog2Vo.Catelog3Vo catelog3Vo = new Catelog2Vo.Catelog3Vo(item.getCatId().toString(),l3.getCatId().toString(), l3.getName().toString());
+                           return catelog3Vo;
+                       }).collect(Collectors.toList());
+
+                       vp.setCatelog3List(collect);
+                   }
+                    return vp;
+                }).collect(Collectors.toList());
+            }
+            return catelog2Vos;
+        }));
+        return parent;
     }
 
     private List<CategoryEntity> getChildrens(CategoryEntity root, List<CategoryEntity> all) {
