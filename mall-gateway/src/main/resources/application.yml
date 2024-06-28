@@ -44,6 +44,14 @@ spring:
             - Path=/api/**
           filters:
             - RewritePath=/api/(?<segment>.*), /renren-fast/$\{segment}
+        - id: mall_host
+          uri: lb://product
+          predicates:
+            - Host=**.mall.com
+
+
+
+
     ##.api
     ##http://localhost:88/api/captcha.jpg  http://renren-fast:8080/api/captcha.jpg
     ##actual path: http://localhost:8080/renren-fast/captcha.jpg

@@ -10,16 +10,16 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class Catelog2Vo {
-    private String catelog1Id; //level 1 parent id
-    private List<Catelog3Vo> catelog3List; //level 3 children
+    private String catalog1Id; //level 1 parent id
+    private List<Catalog3Vo> catalog3List; //level 3 children
     private String id;
     private String name;
 
     @NoArgsConstructor
     @AllArgsConstructor
     @Data
-    public static class Catelog3Vo{
-        private String catelog2Id;
+    public static class Catalog3Vo{
+        private String catalog2Id;
         private String name;
         private String id;
     }

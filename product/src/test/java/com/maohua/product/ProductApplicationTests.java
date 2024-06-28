@@ -11,10 +11,13 @@ import com.maohua.product.service.BrandService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 
 import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest
 class ProductApplicationTests {
@@ -22,7 +25,16 @@ class ProductApplicationTests {
     @Autowired
     BrandService brandService;
 
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
+
+    @Test
+    public void testRedis(){
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+        ops.set("hello", "world_" + UUID.randomUUID().toString());
+        System.out.println("data saved " + ops.get("hello"));
+    }
     @Test
     void contextLoads() {
 
