@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
@@ -82,7 +83,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         baseMapper.deleteBatchIds(list);
     }
 
-    @CacheEvict(value = "category", key = "'getLevel1Categorys'")
+//    @CacheEvict(value = "category", key = "'getLevel1Categorys'")
+    @Caching(evict={ @CacheEvict(value = "category", key = "'getLevel1Categorys'"), @CacheEvict(value = "category", key = "'getCatalogJson'")})
     @Transactional
     @Override
     public void updateCascade(CategoryEntity category) {
@@ -98,15 +100,48 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     //需要指定缓存的分区
     //默认expire -1，永不过期
-    @Cacheable(value ={"category"}, key ="#root.methodName") //当前结果需要缓存，如果缓存中有，方法不用调用
+    @Cacheable(value ={"category"}, key ="#root.methodName", sync = true) //当前结果需要缓存，如果缓存中有，方法不用调用
     @Override
     public List<CategoryEntity> getLevel1Categorys() {
         List<CategoryEntity> categoryEntities = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
         return categoryEntities;
     }
 
+    @Cacheable(value = {"category"}, key = "#root.methodName")
     @Override
     public Map<String, List<Catelog2Vo>> getCatalogJson() {
+        System.out.println("查询了数据库。。。。。。。。");
+        List<CategoryEntity> selectList = baseMapper.selectList(null);
+        //1.查出所有一级分类
+        List<CategoryEntity> level1Categorys = getParent_cid(selectList, 0L);
+        //2.encapsulate
+        Map<String, List<Catelog2Vo>> parent = level1Categorys.stream().collect(Collectors.toMap(k->k.getCatId().toString(), v->{
+            //查到一级分类下的二级分类
+            List<CategoryEntity> categoryEntities = getParent_cid(selectList, v.getCatId());
+            List<Catelog2Vo> catelog2Vos = null;
+            if(categoryEntities!=null&&categoryEntities.size()>0){
+                catelog2Vos = categoryEntities.stream().map(item ->{
+                    Catelog2Vo vp = new Catelog2Vo(item.getCatId().toString(), null, item.getCatId().toString(), item.getName());
+                    //找当前二级分类的三级分类
+                    List<CategoryEntity> level3Vos = getParent_cid(selectList, item.getCatId());
+                    if(level3Vos != null && level3Vos.size()>0){
+                        List<Catelog2Vo.Catalog3Vo> collect = level3Vos.stream().map(l3->{
+                            Catelog2Vo.Catalog3Vo catelog3Vo = new Catelog2Vo.Catalog3Vo(item.getCatId().toString(),l3.getCatId().toString(), l3.getName().toString());
+                            return catelog3Vo;
+                        }).collect(Collectors.toList());
+
+                        vp.setCatalog3List(collect);
+                    }
+                    return vp;
+                }).collect(Collectors.toList());
+            }
+            return catelog2Vos;
+        }));
+
+        return parent;
+    }
+
+    public Map<String, List<Catelog2Vo>> getCatalogJson2() {
         String catalogJson = redisTemplate.opsForValue().get("catalogJson");
         //cache save all json formate
         if(StringUtils.isEmpty(catalogJson)){
