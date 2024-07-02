@@ -6,8 +6,12 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.maohua.product.dao.AttrGroupDao;
+import com.maohua.product.dao.SkuSaleAttrValueDao;
 import com.maohua.product.entity.BrandEntity;
 import com.maohua.product.service.BrandService;
+import com.maohua.product.vo.SkuItemSaleAttrVo;
+import com.maohua.product.vo.SpuItemAttrGroupVo;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +36,25 @@ class ProductApplicationTests {
     @Autowired
     RedissonClient redissonClient;
 
+    @Autowired
+    AttrGroupDao attrGroupDao;
+
+    @Autowired
+    SkuSaleAttrValueDao skuSaleAttrValueDao;
+
     @Test
     public void redisson(){
         System.out.println(redissonClient);
     }
 
+    @Test
+    public void test0(){
+//        List<SpuItemAttrGroupVo> result = attrGroupDao.getAttrGroupWithAttrsBySpuId(13L, 225L);
+//        System.out.println("size: "+ result.size() +" " + result.toString());
+        List<SkuItemSaleAttrVo> result = skuSaleAttrValueDao.getSaleAttrsBySpuId(13L);
+        System.out.println(result);
+
+    }
 
     @Test
     public void testRedis(){

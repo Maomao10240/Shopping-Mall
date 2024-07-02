@@ -3,8 +3,7 @@ package com.maohua.product.service.impl;
 import com.maohua.common.utils.PageUtils;
 import com.maohua.product.entity.AttrEntity;
 import com.maohua.product.service.AttrService;
-import com.maohua.product.vo.AttrGroupRelationVo;
-import com.maohua.product.vo.AttrGroupWithAttrsVo;
+import com.maohua.product.vo.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +17,11 @@ import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.maohua.common.utils.PageUtils;
 import com.maohua.common.utils.Query;
 
 import com.maohua.product.dao.AttrGroupDao;
 import com.maohua.product.entity.AttrGroupEntity;
 import com.maohua.product.service.AttrGroupService;
-import org.w3c.dom.Attr;
-
-import static javax.management.Query.or;
 
 
 @Service("attrGroupService")
@@ -80,6 +75,14 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
             return vo;
         }).collect(Collectors.toList());
         return collect;
+    }
+
+    @Override
+    public List<SpuItemAttrGroupVo> getAttrGroupWithAttrsBySpuId(Long spuId, Long catalogId) {
+        AttrGroupDao baseMapper = this.getBaseMapper();
+        List<SpuItemAttrGroupVo> vos = baseMapper.getAttrGroupWithAttrsBySpuId(spuId, catalogId);
+
+        return vos;
     }
 
 }
