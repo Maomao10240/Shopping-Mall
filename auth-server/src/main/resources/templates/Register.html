@@ -5001,7 +5001,7 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
 
 
 		<header>
-			<a href="https://www.jd.com/?cu=true&utm_source=haosou-pinzhuan&utm_medium=cpc&utm_campaign=t_288551095_haosoupinzhuan&utm_term=0a875d61c5fe47d8bc48679132932d23_0_2702c6f4ae1c4cd191c1ee4398e2e21b" class="logo"><img src="Reg/img/logo1.jpg" alt=""></a>
+			<a href="http://mall.com" class="logo"><img src="Reg/img/logo1.jpg" alt=""></a>
 			<div class="desc">欢迎注册</div>
 			<div class="dfg">
 				<span>已有账号？</span>
@@ -5048,9 +5048,7 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
 			<input maxlength="20" type="text" placeholder="请输入验证码" class="caa">
 			</label>
 					<span id="sendCode">发送验证码</span>
-					<div class="tips">
 
-					</div>
 				</div>
 				<div class="arguement">
 					<input type="checkbox" id="xieyi"> 阅读并同意
@@ -5302,6 +5300,33 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
 			$(".cuo").click(function() {
 				$(".zong").hide();
 			});
+			$(function(){
+				$("#sendCode").click(function(){
+					//指定手机发送验证码
+                    if($(this).hasClass("disabled")){
+
+					}else{
+						timeout();
+					}
+
+
+				})
+			})
+            var num = 60;
+			function timeout(){
+				$("#sendCode").attr("class", "disabled");
+				if(num==0){
+					$("#sendCode").text("send code");
+                    $("#sendCode").attr("class", "");
+
+                    num = 60;
+				}else{
+					var str = num+"s resend ";
+					$("#sendCode").text(str);
+					setTimeout("timeout()",1000);
+				}
+				num--;
+			}
 		</script>
 	</body>
 

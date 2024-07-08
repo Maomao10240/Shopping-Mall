@@ -7,6 +7,7 @@ import com.maohua.product.entity.SkuInfoEntity;
 import com.maohua.product.vo.SkuItemSaleAttrVo;
 import com.maohua.product.vo.SkuItemVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,5 +26,7 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
     PageUtils queryPageByCondition(Map<String, Object> params);
 
     SkuItemVo item(Long skuId);
+
+    List<SkuInfoEntity> getSkusBySpuId(Long spuId);
 }
 

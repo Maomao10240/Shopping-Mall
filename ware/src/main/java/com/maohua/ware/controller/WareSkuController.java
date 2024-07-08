@@ -1,14 +1,12 @@
 package com.maohua.ware.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.maohua.ware.vo.SkuHasStockVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.maohua.ware.entity.WareSkuEntity;
 import com.maohua.ware.service.WareSkuService;
@@ -41,7 +39,14 @@ public class WareSkuController {
         return R.ok().put("page", page);
     }
 
+    @PostMapping("hasStock")
+    public List<SkuHasStockVo> getSkusHasStock(@RequestBody List<Long> skuIds){
+        List<SkuHasStockVo> vos = wareSkuService.getSkusHasStock(skuIds);
+//        R<List<SkuHasStockVo>> ok = R.ok();
+//        ok.setDataa(vos);
+        return vos;
 
+    }
     /**
      * 信息
      */

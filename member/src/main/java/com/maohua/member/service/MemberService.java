@@ -3,6 +3,7 @@ package com.maohua.member.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.maohua.common.utils.PageUtils;
 import com.maohua.member.entity.MemberEntity;
+import com.maohua.member.vo.MemberLoginVo;
 
 import java.util.Map;
 
@@ -16,5 +17,7 @@ import java.util.Map;
 public interface MemberService extends IService<MemberEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    MemberEntity login(MemberLoginVo vo);
 }
 

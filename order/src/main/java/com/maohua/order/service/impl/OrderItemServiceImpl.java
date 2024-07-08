@@ -1,5 +1,9 @@
 package com.maohua.order.service.impl;
 
+import com.maohua.order.entity.OrderReturnReasonEntity;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -24,6 +28,13 @@ public class OrderItemServiceImpl extends ServiceImpl<OrderItemDao, OrderItemEnt
         );
 
         return new PageUtils(page);
+    }
+
+    @RabbitListener(queues = {"hello-java-queue"})
+    public void receiveMessage(Message message, OrderReturnReasonEntity content){
+        byte[] body = message.getBody();
+        MessageProperties properties = message.getMessageProperties();
+        System.out.println("Message received >>>>>>>>>>>>>>>>>>>>>>>>>>" +  message +" content: "+content);
     }
 
 }

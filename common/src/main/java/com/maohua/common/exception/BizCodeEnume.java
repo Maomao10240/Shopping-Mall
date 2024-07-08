@@ -2,7 +2,9 @@ package com.maohua.common.exception;
 
 public enum BizCodeEnume {
     UNKNOWN_EXCEPTION(10000, "UNKNOWN EXCEPTION"),
-    VALID_EXCEPTION(10001, "DATA VALIDATION FAILED");
+    VALID_EXCEPTION(10001, "DATA VALIDATION FAILED"),
+    PRODUCT_UP_EXCEPTION(11000, "PRODUCT UP ERROR");
+
 
     private int code;
     private String msg;

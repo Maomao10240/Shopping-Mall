@@ -4,12 +4,9 @@ import java.util.Arrays;
 import java.util.Map;
 
 import com.maohua.member.feign.CouponFeignService;
+import com.maohua.member.vo.MemberLoginVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.maohua.member.entity.MemberEntity;
 import com.maohua.member.service.MemberService;
@@ -49,6 +46,17 @@ public class MemberController {
         PageUtils page = memberService.queryPage(params);
 
         return R.ok().put("page", page);
+    }
+
+    @PostMapping("/login")
+    public R login(@RequestBody MemberLoginVo vo){
+        MemberEntity entity = memberService.login(vo);
+        if(entity != null){
+            return R.ok().setData(entity);
+        }else{
+            return R.error();
+        }
+
     }
 
 

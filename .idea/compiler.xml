@@ -8,15 +8,16 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="product" />
-        <module name="search" />
         <module name="coupon" />
-        <module name="common" />
         <module name="auth-server" />
-        <module name="member" />
         <module name="ware" />
+        <module name="renren-generator" />
+        <module name="search" />
+        <module name="mall-cart" />
+        <module name="common" />
+        <module name="member" />
         <module name="renren-fast" />
         <module name="order" />
-        <module name="renren-generator" />
         <module name="mall-gateway" />
         <module name="third-party" />
       </profile>
@@ -27,6 +28,7 @@
       <module name="auth-server" options="-parameters" />
       <module name="common" options="-parameters" />
       <module name="coupon" options="-parameters" />
+      <module name="mall-cart" options="-parameters" />
       <module name="mall-gateway" options="-parameters" />
       <module name="member" options="-parameters" />
       <module name="order" options="-parameters" />

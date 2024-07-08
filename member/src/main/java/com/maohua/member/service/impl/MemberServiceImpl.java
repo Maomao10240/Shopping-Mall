@@ -1,5 +1,6 @@
 package com.maohua.member.service.impl;
 
+import com.maohua.member.vo.MemberLoginVo;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -24,6 +25,21 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public MemberEntity login(MemberLoginVo vo) {
+        String username = vo.getUsername();
+        String password = vo.getPassword();
+        //去数据库 SELECT * FROM `ums_member` WHERE username =? O OR mobile =?
+        MemberDao memberDao = this.baseMapper;
+        MemberEntity memberEntity = memberDao.selectOne(new QueryWrapper<MemberEntity>().eq("username", username).or().eq("mobile", username));
+        if(memberEntity == null){
+            return null;
+        }else{
+            return memberEntity;
+        }
+
     }
 
 }
