@@ -2,6 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/renren-fast-vue/src/element-ui-theme/myMobileApp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/renren-fast-vue/src/store/myMobileApp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/renren-generator" vcs="Git" />
   </component>
 </project>
